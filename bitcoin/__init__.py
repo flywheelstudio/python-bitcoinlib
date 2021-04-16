@@ -64,6 +64,7 @@ class SimNetParams(bitcoin.core.CoreSimNetParams):
     BASE58_PREFIXES = {'PUBKEY_ADDR':63,
                        'SCRIPT_ADDR':123,
                        'SECRET_KEY' :100}
+    BECH32_HRP = 'sb'
 
 """Master global setting for what chain params we're using.
 
