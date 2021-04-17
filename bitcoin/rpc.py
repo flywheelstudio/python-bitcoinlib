@@ -411,7 +411,7 @@ class Proxy(BaseProxy):
         """Return a JSON object containing blockchaininfo"""
         return self._call('getblockchaininfo')
 
-    #Untested. Coudln't find valid filter_type? 
+    #Untested. Coudln't find valid filter_type?
     def getblockfilter(self, block_hash, filter_type="basic"):
         """
         Return a JSON object containing filter data and header data
@@ -475,7 +475,7 @@ class Proxy(BaseProxy):
         # On clients before PR #17831, passing hash as bytes will result in Block not found
         """Return a JSON object containing block stats"""
 
-        if isinstance(hash_or_height, bytes): 
+        if isinstance(hash_or_height, bytes):
             hval = b2lx(hash_or_height)
         else: #int or str of block_hash or height
             hval = hash_or_height
@@ -564,7 +564,7 @@ class Proxy(BaseProxy):
 
         includemempool - Include mempool txouts
         """
-        if isinstance(outpoint, COutPoint): 
+        if isinstance(outpoint, COutPoint):
             r = self._call('gettxout', b2lx(outpoint.hash), outpoint.n, includemempool)
         else:
             r = self._call('gettxout', outpoint[0], outpoint[1], includemempool)
@@ -611,14 +611,14 @@ class Proxy(BaseProxy):
     def scantxoutset(self, action, objects):
         """Scans current utxo set
         Actions: "start", "abort", "status"
-        objects: 
+        objects:
         (json array, required) Array of scan objects
         Every scan object is either a string descriptor or an object
         """
         return self._call('scantxoutset', action, objects)
 
     def verifychain(self, checklevel=3, nblocks=6):
-        """Returns a bool upon verifying chain 
+        """Returns a bool upon verifying chain
         Checklevel - thoroughness of verification (0-4)
         nblocks - number of blocks to check (0=all)
         """
@@ -655,7 +655,7 @@ class Proxy(BaseProxy):
     # def stop(self):
     #     """Stops bitcoind"""
     #     self._call('stop')
-    
+
     def uptime(self):
         """Returns int of uptime"""
         return self._call('uptime')
@@ -668,7 +668,7 @@ class Proxy(BaseProxy):
     def generate(self, numblocks):
         """
         DEPRECATED (will be removed in bitcoin-core v0.19)
-        
+
         Mine blocks immediately (before the RPC call returns)
 
         numblocks - How many blocks are generated immediately.
@@ -680,7 +680,7 @@ class Proxy(BaseProxy):
 
     def generatetoaddress(self, numblocks, addr):
         """Mine blocks immediately (before the RPC call returns) and
-        allocate block reward to passed address. Replaces deprecated 
+        allocate block reward to passed address. Replaces deprecated
         "generate(self,numblocks)" method.
 
         numblocks - How many blocks are generated immediately.
@@ -806,7 +806,7 @@ class Proxy(BaseProxy):
         return self._call('listbanned')
 
     def ping(self):
-        """Ping all connections and record ping time in 
+        """Ping all connections and record ping time in
         getpeerinfo
         """
         return self._call('ping')
@@ -879,9 +879,9 @@ class Proxy(BaseProxy):
         """Returns an extracted transaction hex or a PSBT, depending on
         extract
         {
-          "psbt" : "value",          
-          "hex" : "value",           
-          "complete" : true|false,   
+          "psbt" : "value",
+          "hex" : "value",
+          "complete" : true|false,
           ]
         }
         """
@@ -1018,7 +1018,7 @@ class Proxy(BaseProxy):
         """
         Options - a JSON dictionary of options. if True is passed, watch-only is included.
 
-        Returns a dict:   
+        Returns a dict:
         {'tx':        Resulting tx
          'fee':       Fee the resulting transaction pays,
          'changepos': Position of added change output, or -1,
@@ -1083,24 +1083,23 @@ class Proxy(BaseProxy):
             keys = [str(k) for k in keys]
         r = self._call('createmultisig', nrequired, keys, address_type)
         # PLEASE CHECK
-        redeemScript = CScript.fromhex(r['redeemScript'])
-        r['redeemScript'] = redeemScript
-        r['address'] = CBitcoinAddress.from_scriptPubKey(redeemScript.to_p2sh_scriptPubKey())
+        r['redeemScript'] = CScript.fromhex(r['redeemScript'])
+        r['address'] = CBitcoinAddress(r['address'])
         return r
-    
+
     def deriveaddresses(self, descriptor, _range=None):
         """Returns addresses from descriptor
 
         """
         #TODO Descriptors need Implementing
         return self._call('deriveaddresses', descriptor, _range)
-    
+
     def estimatesmartfee(self, conf_target, estimate_mode=None):
         """Returns a JSON object with feerate, errors, and block estimate
         conf_target - attempted number of blocks from current tip to place tx
         estimate_mode:
         "UNSET"
-        "ECONOMICAL"            
+        "ECONOMICAL"
         default="CONSERVATIVE"
         """
         return self._call('estimatesmartfee', conf_target, estimate_mode)
@@ -1123,7 +1122,7 @@ class Proxy(BaseProxy):
         """
         #TODO THIS SHOULD BE TURNED INTO DERSignature object
         return self._call('signmessagewithprivkey', str(privkey), message)
-        
+
     def verifymessage(self, address, signature, message):
         """Return true/false if message signature is valid"""
         return self._call('verifymessage', str(address), str(signature), message)
@@ -1141,9 +1140,9 @@ class Proxy(BaseProxy):
         """Add a NON-watch-only multisig address to the wallet. Requires new backup."""
         #Works for both addresses and pubkeys, but hex() vs str() is annoying.
         #TODO see if CPubKey.__str__() is used elsewhere or can be changed.
-        if isinstance(keys[0], CBitcoinAddress): 
+        if isinstance(keys[0], CBitcoinAddress):
             keys = [str(k) for k in keys]
-        elif isinstance(keys[0], (CPubKey, bytes)):  
+        elif isinstance(keys[0], (CPubKey, bytes)):
             keys = [k.hex() for k in keys]
         r = self._call('addmultisigaddress', nrequired, keys, label, address_type)
         r['address'] = CBitcoinAddress(r['address'])
@@ -1163,7 +1162,7 @@ class Proxy(BaseProxy):
         return self._call('bumpfee', txid, options)
 
     def createwallet(self, wallet_name, disable_priv_keys=None, blank=None, passphrase=None, avoid_reuse=None ):
-        """Create a new Wallet 
+        """Create a new Wallet
         wallet_name - name
         disable_priv_keys - watch_only, default=False
         blank - create a blank wallet with no seed or keys
@@ -1178,7 +1177,7 @@ class Proxy(BaseProxy):
         """
         r = self._call('dumpprivkey', str(addr))
         return CBitcoinSecret(r)
-    
+
     def dumpwallet(self, filename):
         """Dump all wallet keys and imported keys to a file.
         NO OVERWRITING ALLOWED
@@ -1195,7 +1194,7 @@ class Proxy(BaseProxy):
 
     def getaddressesbylabel(self, label):
         """Return a JSON object with addresses as keys"""
-        # Convert to CBitcoinAddress? 
+        # Convert to CBitcoinAddress?
         # not converting addresses makes the dict searchable.
         return self._call('getaddressbylabel', label)
 
@@ -1213,7 +1212,7 @@ class Proxy(BaseProxy):
             if r['script'] == 'scripthash':
                 r['redeemScript'] = CScript.fromhex(r['hex'])
                 # Keeping with previous style. why not CPubKey?
-                r['pubkey'] = unhexlify(r['pubkey']) 
+                r['pubkey'] = unhexlify(r['pubkey'])
                 # PERHAPS ALSO CHANGE ScriptPubKey to CScript?
         return r
 
@@ -1308,7 +1307,7 @@ class Proxy(BaseProxy):
             return r
         except:
             raise DeprecationWarning("Use %s.getbalances().mine.untrusted_pending" % self.__class__.__name__)
-        
+
     def getwalletinfo(self):
         """Returns a JSON with wallet info
         Results vary by version.
@@ -1322,11 +1321,11 @@ class Proxy(BaseProxy):
         except KeyError:
             pass
         return r
-    
+
     #TODO ADD P2SH arg. This will cause JSONRPCError on older versions
     def importaddress(self, addr, label='', rescan=True):
         """Adds an address or pubkey to wallet without the associated privkey."""
-        
+
         addr = str(addr)
 
         r = self._call('importaddress', addr, label, rescan)
@@ -1339,8 +1338,8 @@ class Proxy(BaseProxy):
         options - a JSON object
         return a JSON
         """
-        # The Requests JSON is so large, I decided not 
-        # to allow CObjects in the JSON. 
+        # The Requests JSON is so large, I decided not
+        # to allow CObjects in the JSON.
         # TODO Fix this?
         return self._call('importmulti', requests, options)
 
@@ -1414,12 +1413,12 @@ class Proxy(BaseProxy):
         for recd in r:
             recd['address'] = CBitcoinAddress(recd['address'])
             recd['amount'] = int(recd['amount']*COIN)
-            #listreceivedbylabel doesn't return TXIDs. 
+            #listreceivedbylabel doesn't return TXIDs.
             # I will be PR'ing Core to change this in Future.
             #recd['txid'] = [lx(txid) for txid in recd['txid']]
         return r
 
-    def listsinceblock(self, block_hash=None, conf_target=1, include_watchonly=None, include_removed=True): 
+    def listsinceblock(self, block_hash=None, conf_target=1, include_watchonly=None, include_removed=True):
         """List balances since block (determined by block_hash)
         """
         r = self._call('listsinceblock', block_hash, conf_target, include_watchonly, include_removed)
@@ -1569,7 +1568,7 @@ class Proxy(BaseProxy):
 
     def setwalletflag(self, flag, value=True):
         """Change state of a given flag for a wallet
-        flag - options: "avoid_reuse" 
+        flag - options: "avoid_reuse"
         value - bool new value for flag
 
         returns a JSON objection with flag and new value
@@ -1633,7 +1632,7 @@ class Proxy(BaseProxy):
         if data:
             vouts.append({"data": data})
         #TODO allow for addresses in options
-            
+
         r = self._call('walletcreatefundedpsbt', vins, vouts, locktime, options, bip32derivs)
         r['fee'] = int(r['fee'] * COIN)
         return r
@@ -1681,7 +1680,7 @@ class Proxy(BaseProxy):
             warnings.warn(
                 "getinfo is deprecated from version 0.16.0 use getnetworkinfo instead", DeprecationWarning
             )
-    
+
 
 
 __all__ = (
