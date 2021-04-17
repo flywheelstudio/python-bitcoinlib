@@ -1611,7 +1611,7 @@ class Proxy(BaseProxy):
 
         returns a JSON object with base64-encoded PSBT, fee, and changepos
         """
-        if isinstance(vins[0], CTxIn):
+        if vins and isinstance(vins[0], CTxIn):
             ins = []
             for i in vins:
                 txid = b2lx(i.prevout.hash)
@@ -1619,6 +1619,7 @@ class Proxy(BaseProxy):
                 sequence = i.nSequence
                 ins.append({"txid": txid, "vout": vout, "sequence": sequence})
             vins = ins #Allow for JSON to be passed directly
+
         if isinstance(vouts[0], CTxOut):
             outs = []
             for o in vouts:
@@ -1629,9 +1630,11 @@ class Proxy(BaseProxy):
                 except CBitcoinAddressError:
                     raise CBitcoinAddressError("Invalid output: %s" % repr(o))
             vouts = outs
+
         if data:
             vouts.append({"data": data})
-        #TODO allow for addresses in options
+
+        # TODO: allow for addresses in options
 
         r = self._call('walletcreatefundedpsbt', vins, vouts, locktime, options, bip32derivs)
         r['fee'] = int(r['fee'] * COIN)
