@@ -418,7 +418,6 @@ class CTransaction(ImmutableSerializable):
         but not here.
         """
         # FIXME can't assume f is seekable
-        import pdb; pdb.set_trace()
         nVersion = struct.unpack(b"<i", ser_read(f,4))[0]
         pos = f.tell()
         markerbyte = struct.unpack(b'B', ser_read(f, 1))[0]
