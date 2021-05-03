@@ -684,7 +684,7 @@ class Proxy(BaseProxy):
         "generate(self,numblocks)" method.
 
         numblocks - How many blocks are generated immediately.
-        addr     - Address to receive block reward (CBitcoinAddress instance)
+        addr      - Address to receive block reward (CBitcoinAddress instance)
 
         Returns iterable of block hashes generated.
         """
@@ -875,7 +875,7 @@ class Proxy(BaseProxy):
         """
         return self._call('decodepsbt', psbt_b64)
 
-    def finalizepsbt(self, psbt_b64, extract=None):
+    def finalizepsbt(self, psbt_b64, extract=True):
         """Returns an extracted transaction hex or a PSBT, depending on
         extract
         {
@@ -1398,7 +1398,7 @@ class Proxy(BaseProxy):
         """List balances by receiving address
         Return a JSON of address infos
         """
-        r = self._call('listreceivedbyaddress', minconf, include_empty, include_watchonly, address_filer)
+        r = self._call('listreceivedbyaddress', minconf, include_empty, include_watchonly, str(address_filter))
         for recd in r:
             recd['address'] = CBitcoinAddress(recd['address'])
             recd['amount'] = int(recd['amount']*COIN)
@@ -1529,7 +1529,7 @@ class Proxy(BaseProxy):
         return self._call('rescanblockchain')
 
     #TODO API updates for sendmany and sendtoaddress
-    def sendmany(self, fromaccount, payments, minconf=1, comment='', subtractfeefromamount=[]):
+    def sendmany(self, fromaccount, payments, minconf=1, comment='', subtractfeefromamount=False]):
         """Send amount to given addresses.
 
         payments - dict with {address: amount}
@@ -1664,7 +1664,7 @@ class Proxy(BaseProxy):
         """Change passphrase from oldpassphrase to newpassphrase"""
         self._call('walletpassphrasechange')
 
-    def walletprocesspsbt(self, psbt, sign=True, sighashtype=None, bip32derivs=None):
+    def walletprocesspsbt(self, psbt, sign=True, sighashtype="ALL", bip32derivs=None):
         """Process base64-encoded PSBT, add info and sign vins that belong to this wallet
         Return a base64-encoded PSBT
         """
