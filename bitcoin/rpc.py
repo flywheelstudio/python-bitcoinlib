@@ -1529,7 +1529,7 @@ class Proxy(BaseProxy):
         return self._call('rescanblockchain')
 
     #TODO API updates for sendmany and sendtoaddress
-    def sendmany(self, fromaccount, payments, minconf=1, comment='', subtractfeefromamount=False]):
+    def sendmany(self, fromaccount, payments, minconf=1, comment='', subtractfeefromamount=False):
         """Send amount to given addresses.
 
         payments - dict with {address: amount}
